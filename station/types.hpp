@@ -1,35 +1,18 @@
 #ifndef STATION_TYPES
 #define STATION_TYPES
 
-enum class serialCommand{
-  SEND,
-  SENT,
-  FAILED,
-};
-
-enum class espNowCommand{
+enum espNowCommand : uint32_t {
   SYNC,
   ACK,
   DATA,
-  INIT,
+  INIT_CMD,
 };
 
-typedef struct dataHeader{
-  uint8_t broadcastAddress[6];
-  int lenght;
-} header;
-
-typedef struct serialMessage{
-  serialCommand command;
-  dataHeader header;
-  byte data[200];
-} serialMessage;
-
-typedef struct epsNowMessage{
-  int nodeId;
+typedef struct {
+  uint16_t nodeId;
   uint8_t messageId;
-  espNowCommand command;
-  byte data[200];
+  uint32_t command;
+  uint8_t data[200];
 } espNowMessage;
 
 typedef struct configNode{
