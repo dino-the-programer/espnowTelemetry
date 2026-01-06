@@ -13,6 +13,7 @@ class SerialCommand(IntEnum):
     SAVE = 3
     INIT = 4
     STARTED = 5
+    DATA_RCV = 6
 
 
 class EspNowCommand(IntEnum):
@@ -50,7 +51,7 @@ HEADER_FORMAT = "<6sI"        # uint8_t[6], uint32_t
 HEADER_SIZE = struct.calcsize(HEADER_FORMAT)
 
 # serialMessage
-SERIAL_MSG_FORMAT = "<I6s2xI200s"
+SERIAL_MSG_FORMAT = "<I6s2xI210s2x"
 SERIAL_MSG_SIZE = struct.calcsize(SERIAL_MSG_FORMAT)
 
 # espNowMessage (aligned)
@@ -166,7 +167,7 @@ class SerialMessage:
             int(self.command),
             self.broadcast_addr,
             self.length,
-            self.data.ljust(200, b'\x00')
+            self.data.ljust(210, b'\x00')
         )
         return pack_frame(FRAME_SERIAL, payload)
 
@@ -230,8 +231,7 @@ class ConfigNode:
         self.node_id = node_id
 
     def pack(self) -> bytes:
-        payload = struct.pack(CONFIG_NODE_FORMAT, self.node_id)
-        return pack_frame(FRAME_CONFIG, payload)
+        return struct.pack(CONFIG_NODE_FORMAT, self.node_id)
 
     @classmethod
     def unpack(cls, payload: bytes):
