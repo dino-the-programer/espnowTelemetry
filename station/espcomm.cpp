@@ -1,6 +1,6 @@
 #include "comm.hpp"
 #include "shared.hpp"
-#include "config.hpp"
+// #include "config.hpp"
 #include <esp_wifi.h>
 
 esp_now_peer_info_t peerInfo;
@@ -8,6 +8,7 @@ bool connectionTry = true;
 callBackRcv cbRCV;
 espNowMessage espNowDataRcv;
 espNowMessage espNowDataSend;
+uint8_t broadcastAddress[] = {0x4C, 0xC3, 0x82, 0xBF, 0x6C, 0xD4};
 
 void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
   Serial.print("\r\nLast Packet Send Status:");
@@ -28,6 +29,13 @@ void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
     memcpy(&cn,espNowDataRcv.data,sizeof(cn));
     espNowDataSend.nodeId = cn.nodeId;
   }
+}
+
+void sendData(byte *data, int size){
+  espNowDataSend.command = espNowCommand::DATA;
+  memcpy(espNowDataSend.data,data,size);
+  esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &espNowDataSend, sizeof(espNowDataSend));
+  espNowDataSend.messageId++;
 }
 
 void registerCallbackRcv(callBackRcv cbrcv){

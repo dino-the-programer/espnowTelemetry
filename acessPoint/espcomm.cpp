@@ -32,11 +32,13 @@ void evalEspComms()
     case espNowCommand::SYNC:
       serialDataSend.command = serialCommand::SAVE;
       memcpy(serialDataSend.header.broadcastAddress, espNowDataRcv.data, 6);
-
-      // Optional: include sender MAC already copied in callback
-      // serialDataSend.header.broadcastAddress is already set
-
       sendSerialComms();   // sends framed + CRC serial packet
+      break;
+    case espNowCommand::DATA:
+      serialDataSend.command = serialCommand::DATA_RCV;
+      memcpy(serialDataSend.data,&espNowDataRcv,sizeof(espNowDataRcv));
+      serialDataSend.header.length = sizeof(espNowDataRcv);
+      sendSerialComms();
       break;
 
     default:

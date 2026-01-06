@@ -10,6 +10,7 @@ enum serialCommand : uint32_t {
   SAVE,
   INIT,
   STARTED,
+  DATA_RCV,
 };
 
 enum espNowCommand : uint32_t {
@@ -28,7 +29,7 @@ typedef struct {
 typedef struct {
   uint32_t command;
   dataHeader header;
-  uint8_t data[200];
+  uint8_t data[210];
 } serialMessage;
 
 typedef struct {
